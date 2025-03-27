@@ -14,10 +14,9 @@ import {
 } from "@/components/ui/sidebar";
 import { ChevronDownIcon, ChevronRightIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-// import { MenuItem } from "../../config/menuItems";
 import { MenuItem, SubMenuItem, menuItems } from "../../../config/menuItems";
 
-// Regular menu item component
+// MenuItem Component
 const MenuItemComponent = ({
   item,
   isActive = false,
@@ -54,23 +53,21 @@ const MenuItemComponent = ({
 
   return (
     <>
-      <SidebarMenuItem>
+      <SidebarMenuItem className="w-full">
         <SidebarMenuButton
           onClick={item.expandable ? toggleExpand : handleClick}
-          style={{ width: "90%" }}
           className={cn(
-            "ml-2 mt-1 rounded-md hover:bg-white transition-colors duration-200",
-            isActive && !item.expandable && "bg-white shadow-sm font-medium text-blue-700"
+            "w-full ml-2 mt-1 rounded-md transition-colors duration-200",
+            isActive ? "bg-blue-100 shadow-sm font-medium text-blue-700" : "hover:bg-gray-100"
           )}
         >
-          <Icon className={cn("text-blue-600", isActive && !item.expandable && "text-blue-700")} />
+          <Icon className={cn("text-blue-600", isActive && "text-blue-700")} />
           <span>{item.name}</span>
           {item.expandable &&
             (isExpanded ? <ChevronDownIcon className="ml-auto w-4 h-4" /> : <ChevronRightIcon className="ml-auto w-4 h-4" />)}
         </SidebarMenuButton>
       </SidebarMenuItem>
 
-      {/* Render sub-items if expanded */}
       {item.expandable && isExpanded && item.subItems && (
         <div className="pl-8">
           {item.subItems.map((subItem, index) => (
@@ -78,8 +75,8 @@ const MenuItemComponent = ({
               <SidebarMenuButton
                 onClick={() => handleSubItemClick(subItem)}
                 className={cn(
-                  "rounded-md hover:bg-gray-100 transition-colors duration-200",
-                  subItem.name === activeSubItem && "bg-white shadow-sm font-medium text-blue-700"
+                  "rounded-md transition-colors duration-200",
+                  subItem.name === activeSubItem ? "bg-blue-100 shadow-sm font-medium text-blue-700" : "hover:bg-gray-100"
                 )}
               >
                 {subItem.icon && <subItem.icon className={cn("text-blue-600", subItem.name === activeSubItem && "text-blue-700")} />}
@@ -93,47 +90,39 @@ const MenuItemComponent = ({
   );
 };
 
-interface CustomSidebarProps {
+// Sidebar Component
+export default function CustomSidebar({
+  title = "Acme Inc",
+  subtitle = "Workspace",
+  children,
+}: {
   title?: string;
   subtitle?: string;
   children?: React.ReactNode;
-}
-
-export default function CustomSidebar({ title = "Acme Inc", subtitle = "Workspace", children }: CustomSidebarProps) {
+}) {
   const router = useRouter();
   const pathname = usePathname();
 
-  // State to track active items
   const [activeItemName, setActiveItemName] = useState<string | undefined>();
   const [activeSubItemName, setActiveSubItemName] = useState<string | undefined>();
-
-  // State to track which menu item is expanded
   const [expandedItemName, setExpandedItemName] = useState<string | undefined>();
 
-  // Update active items when pathname changes
   useEffect(() => {
     const currentActivePath = pathname || "/";
 
-    // Find matching main item
     const mainItem = menuItems.find((item) => item.path === currentActivePath);
-
-    // Find parent item with matching subitem
     const parentWithSub = menuItems.find((item) => item.subItems?.some((sub) => sub.path === currentActivePath));
-
     const subItem = parentWithSub?.subItems?.find((sub) => sub.path === currentActivePath);
 
-    const newActiveItem = mainItem?.name || parentWithSub?.name;
-    setActiveItemName(newActiveItem);
+    setActiveItemName(mainItem?.name || parentWithSub?.name);
     setActiveSubItemName(subItem?.name);
 
-    // Auto-expand the active parent item with submenu
     if (parentWithSub?.name) {
       setExpandedItemName(parentWithSub.name);
     }
   }, [pathname]);
 
   const handleItemSelect = (name: string, path?: string) => {
-    // For immediate UI feedback before navigation
     const clickedItem = menuItems.find((item) => item.name === name);
     const isMainItem = !!clickedItem;
 
@@ -141,12 +130,10 @@ export default function CustomSidebar({ title = "Acme Inc", subtitle = "Workspac
       setActiveItemName(name);
       setActiveSubItemName(undefined);
 
-      // If this is not an expandable item, close any open expandable items
       if (!clickedItem.expandable) {
         setExpandedItemName(undefined);
       }
     } else {
-      // Find which parent contains this subitem
       const parent = menuItems.find((item) => item.subItems?.some((sub) => sub.name === name));
 
       if (parent) {
@@ -155,36 +142,32 @@ export default function CustomSidebar({ title = "Acme Inc", subtitle = "Workspac
       }
     }
 
-    // Navigate if path provided
     if (path) {
-      // router.push(path);
+      const newPath = path.startsWith("/home") ? path : `/home${path}`;
+      router.push(newPath);
     }
   };
 
   const handleToggleExpand = (name: string) => {
-    // If clicking the currently expanded item, close it
-    if (expandedItemName === name) {
-      setExpandedItemName(undefined);
-    } else {
-      // Otherwise, close the current one and open the new one
-      setExpandedItemName(name);
-    }
+    setExpandedItemName((prev) => (prev === name ? undefined : name));
   };
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="flex h-screen bg-gray-50">
-        <Sidebar className="w-64 bg-gray-50" style={{ borderRight: "none" }}>
-          {/* Header with Title */}
-          <SidebarHeader className="p-4 flex flex-row justify-between items-center gap-3">
-            <div>Flex</div>
+      <div className="flex h-screen">
+        <Sidebar className="w-64 bg-gray-50 fixed h-full border-r">
+          <SidebarHeader className="p-4 flex flex-row items-center gap-3">
+            <img
+              src="https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg"
+              alt="User Avatar"
+              className="w-10 h-10 rounded-md"
+            />
             <div className="flex flex-col">
               <span className="text-sm font-medium">{title}</span>
               <span className="text-xs text-gray-500">{subtitle}</span>
             </div>
           </SidebarHeader>
 
-          {/* Sidebar Menu */}
           <SidebarContent>
             <SidebarMenu>
               {menuItems.map((item) => (
@@ -202,7 +185,6 @@ export default function CustomSidebar({ title = "Acme Inc", subtitle = "Workspac
           </SidebarContent>
         </Sidebar>
 
-        {/* Main Content */}
         <div className="flex-1 overflow-auto">
           <div className="p-4">
             <SidebarTrigger className="mb-4" />

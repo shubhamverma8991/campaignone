@@ -31,7 +31,7 @@ export type MenuItem = {
 
 // Menu item data
 export const menuItems: MenuItem[] = [
-  { name: "Dashboard", icon: LayoutDashboardIcon, path: "/dashboard" },
+  { name: "Dashboard", icon: LayoutDashboardIcon, path: "/" },
   { name: "Leads", icon: UsersIcon, path: "/leads" },
   { name: "Companies", icon: BuildingIcon, path: "/companies" },
   { name: "Segments", icon: ClockIcon, path: "/segments" },
