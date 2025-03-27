@@ -57,8 +57,9 @@ const MenuItemComponent = ({
       <SidebarMenuItem>
         <SidebarMenuButton
           onClick={item.expandable ? toggleExpand : handleClick}
+          style={{ width: "90%" }}
           className={cn(
-            "rounded-md hover:bg-gray-100 transition-colors duration-200",
+            "ml-2 mt-1 rounded-md hover:bg-white transition-colors duration-200",
             isActive && !item.expandable && "bg-white shadow-sm font-medium text-blue-700"
           )}
         >
@@ -173,9 +174,10 @@ export default function CustomSidebar({ title = "Acme Inc", subtitle = "Workspac
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="flex h-screen bg-gray-50">
-        <Sidebar className="w-64 border-r bg-gray-50">
+        <Sidebar className="w-64 bg-gray-50" style={{ borderRight: "none" }}>
           {/* Header with Title */}
-          <SidebarHeader className="p-4 border-b flex items-center gap-3">
+          <SidebarHeader className="p-4 flex flex-row justify-between items-center gap-3">
+            <div>Flex</div>
             <div className="flex flex-col">
               <span className="text-sm font-medium">{title}</span>
               <span className="text-xs text-gray-500">{subtitle}</span>

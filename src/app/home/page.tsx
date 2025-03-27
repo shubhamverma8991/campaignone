@@ -7,7 +7,7 @@ import CustomSidebar from "../components/CustomSidebar";
 export default function Home() {
   return (
     <CustomSidebar>
-      <div className="w-full h-full"></div>
+      <div className="w-full h-full">Hello</div>
       {/* Add your main content here */}
     </CustomSidebar>
   );
